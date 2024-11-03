@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Praktikum Data Mining</title>
+    <link href="/output.css" rel="stylesheet">
+    <style>
+        .username-color-0 {
+            color: #FF6347; /* Tomato */
+        }
+        .username-color-1 {
+            color: #4682B4; /* SteelBlue */
+        }
+        .username-color-2 {
+            color: #32CD32; /* LimeGreen */
+        }
+        .username-color-3 {
+            color: #FFD700; /* Gold */
+        }
+        .username-color-4 {
+            color: #8A2BE2; /* BlueViolet */
+        }
+        
+
+        /* Custom scrollbar styling */
+        #discussionThreads::-webkit-scrollbar {
+            width: 6px; /* Width of the entire scrollbar */
+        }
+        #discussionThreads::-webkit-scrollbar-track {
+            background: #2d2d2d; /* Color of the track */
+        }
+        #discussionThreads::-webkit-scrollbar-thumb {
+            background-color: #888; /* Color of the scroll thumb */
+            border-radius: 10px; /* Roundness of the scroll thumb */
+        }
+        #discussionThreads::-webkit-scrollbar-thumb:hover {
+            background: #555; /* Color of the scroll thumb on hover */
+        }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white">
+  <nav class="bg-black p-10 flex justify-between items-center h-20">
+    <div class="space-x-4">
+      <a href="/home" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Home</a>
+      <a href="/notifikasi" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Notifikasi</a>
+      <a href="/profile" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Profile</a>
+      <a href="/logout" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Logout</a>
+    </div>
+    <div class="space-x-4 flex items-center">
+      <% if (userRole === 'aslab') { %>
+        <button id="buatKelasBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Buat Kelas</button>
+      <% } %>
+      <% if (userRole === 'mahasiswa') { %>
+        <a href="/enrollment" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Enrollment</a>
+      <% } %>
+      <div class="flex items-center space-x-2">
+        <div class="bg-gray-700 rounded-full w-10 h-10 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A12.074 12.074 0 0012 21a12.074 12.074 0 006.879-3.196M15 10a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </div>
+        <span class="text-white font-medium"><%= userName %></span>
+      </div>
+    </div>
+  </nav>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-black h-screen p-5">
+            <h2 class="text-xl font-bold mb-5"><%= kelas.name %> <%= kelas.year %></h2>
+            <nav class="space-y-2">
+                <a href="/dashboard/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300">Pertemuan Praktikum</a>
+                <a href="/jadwalPraktikum/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300">Jadwal Praktikum</a>
+                <a href="/showReference/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300">Referensi Tambahan</a>
+                <a href="/forumDiskusi/<%= kelas.id %>" class="bg-blue-500 block py-2 px-4 rounded-md text-white transition-colors duration-300">Forum Diskusi</a>
+                <% if (userRole === 'aslab') { %>
+                  <a href="/absensi/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Absen kelas</a>
+                <% } %>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="mx-auto p-4 space-y-4 w-full">
+            <!-- Discussion Threads -->
+            <div id="discussionThreads" class="space-y-4 mb-3 max-h-[calc(100vh-20rem+10%)] overflow-y-auto p-4">
+                <!-- Discussions List -->
+                <% if (discussions.length > 0) { %>
+                <!-- Sample Discussion Bubbles -->
+                <% 
+                // Create a dictionary to store user colors
+                const userColors = {};
+                let colorIndex = 0;
+
+                // Define a list of colors
+                const colors = ['username-color-0', 'username-color-1', 'username-color-2', 'username-color-3', 'username-color-4'];
+                discussions.forEach((discussion) => { 
+                  // Assign a color to each userId if not already assigned
+                  if (!userColors[discussion.userId]) {
+                    userColors[discussion.userId] = colors[colorIndex % colors.length];
+                    colorIndex++;
+                  }
+                });
+                discussions.forEach((discussion) => { 
+                %>
+                <div class="flex justify-between ">
+                    <% if (discussion.userId === currentUser.id) { %>
+                    <div class="flex flex-col items-end space-y-2 w-full max-w-md ml-auto">
+                        <div class="text-sm font-bold <%= userColors[discussion.userId] %>">
+                            <%= discussion.User.name %>
+                        </div>
+                        <div class="bg-blue-500 text-white px-4 py-2 rounded-lg">
+                            <%= discussion.content %>
+                        </div>
+                    </div>
+                    <% } else { %>
+                      <div class="flex flex-col items-start space-y-2 w-full max-w-md mr-auto">
+                        <div class="text-sm font-bold <%= userColors[discussion.userId] %>">
+                            <%= discussion.User.name %>
+                        </div>
+                        <div class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg">
+                            <%= discussion.content %>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+                <% }) %>
+                <% } else { %>
+                <p class="text-white" style="height:100vh;display:flex;justify-content:center;align-items:center;margin-top:-100px;">Belum ada percakapan.</p>
+                <% } %>
+            </div>
+
+            <form id="discussionForm" action="/postDiscussion" method="POST" class="fixed bottom-0 left-0 right-0 bg-gray-200 shadow-lg p-4 flex items-center space-x-2">
+                <input type="hidden" name="classId" value="<%= kelas.id %>">
+                <textarea name="content" id="content" rows="2" placeholder="Type your message..." class="flex-1 px-3 py-2 text-gray-700 border rounded-lg focus:outline-none" required></textarea>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg transition duration-300 hover:bg-blue-700">Post</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

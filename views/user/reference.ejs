@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Praktikum Data Mining</title>
+    <link href="/output.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-gray-900 text-white">
+  <nav class="bg-black p-10 flex justify-between items-center h-20">
+    <div class="space-x-4">
+      <a href="/home" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Home</a>
+      <a href="/notifikasi" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Notifikasi</a>
+      <a href="/profile" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Profile</a>
+      <a href="/logout" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Logout</a>
+    </div>
+    <div class="space-x-4 flex items-center">
+      <% if (userRole === 'aslab') { %>
+        <button id="buatKelasBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Buat Kelas</button>
+      <% } %>
+      <% if (userRole === 'mahasiswa') { %>
+        <a href="/enrollment" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Enrollment</a>
+      <% } %>
+      <div class="flex items-center space-x-2">
+        <div class="bg-gray-700 rounded-full w-10 h-10 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A12.074 12.074 0 0012 21a12.074 12.074 0 006.879-3.196M15 10a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </div>
+        <span class="text-white font-medium"><%= userName %></span>
+      </div>
+    </div>
+  </nav>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-black h-screen p-5">
+            <h2 class="text-xl font-bold mb-5"><%= kelas.name %> <%= kelas.year %></h2>
+            <nav class="space-y-2">
+                <a href="/dashboard/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Pertemuan Praktikum</a>
+                <a href="/jadwalPraktikum/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Jadwal Praktikum</a>
+                <a href="/showReference/<%= kelas.id %>" class="bg-blue-500 block py-2 px-4 rounded-md text-white transition-colors duration-300 border-b-2 border-transparent">Referensi Tambahan</a>
+                <a href="/forumDiskusi/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Forum Diskusi</a>
+                <% if (userRole === 'aslab') { %>
+                  <a href="/absensi/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Absen kelas</a>
+                <% } %>
+            </nav>
+        </div>
+        <!-- content -->
+        <div class="flex-1 p-10">
+          <div class="flex justify-between items-center mb-8">
+            <h1 class="text-2xl font-bold italic">Reference</h1>
+            <% if (userRole === 'aslab') { %>
+              <button id="tambahReferensi" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg">Tambah Referensi</button>
+            <% } %>
+          </div>
+          <div class="space-y-8">
+            <% if (references.length > 0) { %>
+              <% references.forEach(reference => { %>
+                <div class="flex flex-col lg:flex-row justify-between items-start">
+                  <div class="lg:w-1/3 mb-4 lg:mb-0">
+                    <div class="bg-gray-800 h-48 w-full flex items-center justify-center">
+                      <span class="text-gray-600">Image Placeholder</span>
+                    </div>
+                  </div>
+                  <div class="lg:w-2/3 lg:pl-6">
+                    <h1 class="text-2xl font-bold mb-2"><%= reference.title %></h1>
+                    <p class="text-gray-500 leading-relaxed">
+                      <%= reference.description %>
+                    </p>
+                  </div>
+                  <% if (userRole === 'aslab') { %>
+                    <div class="lg:w-1/12 flex justify-end">
+                      <a href="/deleteReference/<%= reference.id %>" class="text-white bg-red-500 hover:bg-red-700 rounded-full p-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </a>
+                    </div>
+                  <% } %>
+                </div>
+              <% }); %>
+            <% } else { %>
+              <div class="text-center text-gray-500">
+                <p>Belum ada referensi tambahan</p>
+              </div>
+            <% } %>
+          </div>
+        </div>
+        
+        
+         <!-- end content -->
+
+</div>
+
+    <div id="buatReferensiModal" class="modal hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+      <div class="bg-white p-10 rounded-lg w-3/4 max-w-2xl">
+          <h2 class="text-3xl font-bold mb-6 text-black">Tambah referensi baru</h2>
+          <form action="/tambahReference" method="post">
+              <div class="mb-6">
+                  <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+                  <input type="text" id="title" name="title" class="text-gray-700 mt-1 p-3 border rounded-lg w-full focus:outline-none">
+                  <input type="hidden" name="classId" value="<%= kelas.id %>">
+              </div>
+              <div class="mb-6">
+                <label for="description" class="block text-sm font-medium text-gray-700">Deskripsi</label>
+                <textarea id="description" name="description" class="text-gray-700 mt-1 p-3 border rounded-lg w-full focus:outline-none"></textarea>
+              </div>
+              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg">Simpan</button>
+              <button type="button" id="closebuatReferensiModalBtn" class="ml-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg">Batal</button>
+          </form>
+      </div>
+    </div>
+<script>
+        const tambahReferensi = document.getElementById('tambahReferensi');
+        const buatReferensiModal = document.getElementById('buatReferensiModal');
+        const closebuatReferensiModalBtn = document.getElementById('closebuatReferensiModalBtn');
+
+        tambahReferensi.addEventListener('click', () => {
+            buatReferensiModal.classList.remove('hidden');
+        });
+
+        closebuatReferensiModalBtn.addEventListener('click', () => {
+            buatReferensiModal.classList.add('hidden');
+        });
+</script>
+</body>
+
+</html>

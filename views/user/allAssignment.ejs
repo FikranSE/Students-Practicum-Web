@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Praktikum Data Mining</title>
+    <link href="/output.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-900 text-white">
+  <nav class="bg-black p-10 flex justify-between items-center h-20">
+    <div class="space-x-4">
+      <a href="/home" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Home</a>
+      <a href="/notifikasi" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Notifikasi</a>
+      <a href="/profile" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Profile</a>
+      <a href="/logout" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Logout</a>
+    </div>
+    <div class="space-x-4 flex items-center">
+      <% if (userRole === 'aslab') { %>
+        <button id="buatKelasBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Buat Kelas</button>
+      <% } %>
+      <% if (userRole === 'mahasiswa') { %>
+        <a href="/enrollment" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Enrollment</a>
+      <% } %>
+      <div class="flex items-center space-x-2">
+        <div class="bg-gray-700 rounded-full w-10 h-10 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A12.074 12.074 0 0012 21a12.074 12.074 0 006.879-3.196M15 10a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </div>
+        <span class="text-white font-medium"><%= userName %></span>
+      </div>
+    </div>
+  </nav>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-black h-screen p-5">
+            <h2 class="text-xl font-bold mb-5"><%= kelas.name %> <%= kelas.year %></h2>
+            <nav class="space-y-2">
+                <a href="/dashboard/<%= kelas.id %>" class="bg-blue-500 block py-2 px-4 rounded-md text-white transition-colors duration-300 border-b-2 border-transparent">Pertemuan Praktikum</a>
+                <a href="/jadwalPraktikum/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Jadwal Praktikum</a>
+                <a href="/showReference/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Referensi Tambahan</a>
+                <a href="/forumDiskusi/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Forum Diskusi</a>
+                <% if (userRole === 'aslab') { %>
+                  <a href="/absensi/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Absen kelas</a>
+                <% } %>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-10 bg-gray-100 min-h-screen">
+          <div class="bg-white p-6 rounded-lg shadow-lg mb-8 block">
+            <div class="flex justify-between items-start">
+              <div>
+                
+                <h1 class="text-4xl font-bold text-gray-800 mb-2"><%= assignment.title %></h1>
+                <p class="text-gray-600 text-lg mb-3">Due: <span class="text-gray-800 font-semibold"><%= formattedDue %></span></p>
+              </div>
+              <div class="text-right">
+                <h2 class="text-2xl font-semibold text-gray-800 italic"><%= meeting.title %></h2>
+              </div>
+            </div>
+            <p class="text-gray-700 text-lg mb-6 italic font-medium hover:not-italic"><%= assignment.instructions %></p>
+            <a class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300" href="/dashboard/<%= kelas.id %>">back</a>
+          </div>
+        
+          <div class="bg-white p-6 rounded-lg shadow-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uploaded File</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <% submissions.forEach(submission => { %>
+                  <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-200 text-gray-800">
+                        <%= submission.User.name %>
+                      </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <% if (submission.uploadedFile) { %>
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-200 text-green-800">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M15.293 5.293a1 1 0 00-1.414 1.414L16.586 10l-2.707 2.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 00-1.414 0zM4 10a2 2 0 012-2h8a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6z" clip-rule="evenodd" />
+                          </svg>
+                          <%= submission.uploadedFile.replace(/.*?-(.*)/, '$1') %>
+                        </span>
+                      <% } else { %>
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-200 text-red-800">
+                          No file submitted
+                        </span>
+                      <% } %>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <a href="/uploads/<%= submission.uploadedFile %>" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-500 hover:bg-indigo-700 text-white transition duration-300" download="<%= submission.uploadedFile %>">
+                        Unduh file
+                      </a>
+                    </td>
+                  </tr>
+                  
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        
+        
+      
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Praktikum Data Mining</title>
+    <link href="../output.css" rel="stylesheet">
+    <script>
+        function toggleAccordion(event) {
+            const content = event.currentTarget.nextElementSibling;
+            content.classList.toggle('hidden');
+        }
+    </script>
+</head>
+
+<body class="bg-gray-900 text-white">
+  <nav class="bg-black p-10 flex justify-between items-center h-20">
+    <div class="space-x-4">
+      <a href="/home" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Home</a>
+      <a href="/notifikasi" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Notifikasi</a>
+      <a href="/profile" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Profile</a>
+      <a href="/logout" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Logout</a>
+    </div>
+    <div class="space-x-4 flex items-center">
+      <% if (userRole === 'aslab') { %>
+        <button id="buatKelasBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Buat Kelas</button>
+      <% } %>
+      <% if (userRole === 'mahasiswa') { %>
+        <a href="/enrollment" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Enrollment</a>
+      <% } %>
+      <div class="flex items-center space-x-2">
+        <div class="bg-gray-700 rounded-full w-10 h-10 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A12.074 12.074 0 0012 21a12.074 12.074 0 006.879-3.196M15 10a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </div>
+        <span class="text-white font-medium"><%= userName %></span>
+      </div>
+    </div>
+  </nav>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-black h-screen p-5">
+            <h2 class="text-xl font-bold mb-5"><%= kelas.name %> <%= kelas.year %></h2>
+            <nav class="space-y-2">
+                <a href="/dashboard/<%= kelas.id %>" class="bg-blue-500 block py-2 px-4 rounded-md text-white transition-colors duration-300 border-b-2 border-transparent">Pertemuan Praktikum</a>
+                <a href="/jadwalPraktikum/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Jadwal Praktikum</a>
+                <a href="/showReference/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Referensi Tambahan</a>
+                <a href="/forumDiskusi/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Forum Diskusi</a>
+                <% if (userRole === 'aslab') { %>
+                  <a href="/absensi/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Absen kelas</a>
+                <% } %>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-10">
+            <div class="flex justify-between items-center mb-5">
+                <h1 class="text-3xl font-bold">Materi Praktikum</h1>
+                <% if (userRole === 'aslab') { %>
+                <button id="buatPertemuanBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Buat Pertemuan</button>
+                <% } %>
+            </div>
+            <p class="mb-5"><%= kelas.name %> <%= kelas.year %></p>
+            <p class="mb-10">Materi praktikum memuat modul praktikum per pertemuan dan instruksi untuk resume dan tugas.</p>
+
+            <!-- content -->
+            <div class="space-y-4">
+              <% if (kelas.Meetings && kelas.Meetings.length > 0) { %>
+                  <% kelas.Meetings.sort((a, b) => a.id - b.id).forEach(meeting => { %> <!-- Ensure meetings are sorted -->
+                      <div>
+                          <a href="#" class="block py-4 px-6 rounded bg-gray-800 hover:bg-gray-700 transition" onclick="toggleAccordion(event)">
+                              <div class="flex justify-between items-center">
+                                  <span class="text-lg text-white"><%= meeting.title %></span>
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                      <path d="M19 9l-7 7-7-7"/>
+                                  </svg>
+                              </div>
+                          </a>
+                          <div class="hidden p-4 bg-gray-700">
+                              <% if (meeting.Modules && meeting.Modules.length > 0) { %>
+                                  <div class="mb-4">
+                                      <h3 class="text-white font-bold mb-2">Modules</h3>
+                                      <div class="space-y-2">
+                                          <% meeting.Modules.forEach(module => { %>
+                                              <div class="flex justify-between items-center bg-white rounded-lg shadow p-4">
+                                                  <a href="/uploads/<%= module.filePath %>" class="text-sm text-gray-900 font-medium italic bg-green-200 text-green-800 px-2 inline-flex leading-5 font-semibold rounded-full" download="/uploads/<%= module.filePath %>">
+                                                      <%= module.filePath.replace(/.*?-(.*)/, '$1') %>
+                                                  </a>
+                                                  <% if (userRole === 'aslab') { %>
+                                                      <a href="/delete-module/<%= module.id %>" class="text-sm text-gray-900 font-medium italic bg-red-200 text-red-800 px-2 inline-flex leading-5 font-semibold rounded-full">Delete Modul</a>
+                                                  <% } else if (userRole === 'mahasiswa') { %>
+                                                      <a href="/uploads/<%= module.filePath %>" class="text-sm text-gray-900 font-medium italic bg-blue-200 text-blue-800 px-2 inline-flex leading-5 font-semibold rounded-full" download="/uploads/<%= module.filePath %>">Unduh Modul</a>
+                                                  <% } %>
+                                              </div>
+                                          <% }) %>
+                                      </div>
+                                  </div>
+                              <% } %>
+          
+                              <% if (userRole === 'aslab') { %>
+                                  <div class="mb-4">
+                                      <button class="bg-green-500 text-white py-2 px-4 rounded-lg transition duration-300 hover:bg-green-700" onclick="showAddModulModal(<%= meeting.id %>)">Add Modul</button>
+                                  </div>
+                              <% } %>
+          
+                              <% if (meeting.Assignments && meeting.Assignments.length > 0) { %>
+                                  <div class="mb-4">
+                                      <h3 class="text-white font-bold mb-2">Assignments</h3>
+                                      <div class="space-y-2">
+                                          <% meeting.Assignments.forEach(assignment => { %>
+                                              <div class="flex justify-between items-center bg-white rounded-lg shadow p-4">
+                                                  <% if (userRole === 'aslab') { %>
+                                                      <a href="/all-assignment/<%= assignment.id %>/<%= kelas.id %>/<%= meeting.id %>" class="text-sm text-indigo-500 font-bold hover:text-indigo-700 transition"><%= assignment.title %></a>
+                                                  <% } else { %>
+                                                      <a href="/detail-assignment/<%= assignment.id %>/<%= kelas.id %>/<%= user.id %>" class="text-sm text-indigo-500 font-bold hover:text-indigo-700 transition"><%= assignment.title %></a>
+                                                  <% } %>
+                                                  <% if (userRole === 'aslab') { %>
+                                                      <a href="/delete-assignment/<%= assignment.id %>" class="text-sm text-gray-900 font-medium italic bg-red-200 text-red-800 px-2 inline-flex leading-5 font-semibold rounded-full">Hapus Tugas</a>
+                                                  <% } %>
+                                              </div>
+                                          <% }) %>
+                                      </div>
+                                  </div>
+                              <% } %>
+          
+                              <% if (userRole === 'aslab') { %>
+                                  <div class="mb-4">
+                                      <button class="bg-red-500 text-white py-2 px-4 rounded-lg transition duration-300 hover:bg-red-700" onclick="showAddTugasModal(<%= meeting.id %>)">Add Tugas</button>
+                                  </div>
+                                  <div class="mb-4">
+                                      <button class="bg-yellow-500 text-white py-2 px-4 rounded-lg transition duration-300 hover:bg-yellow-700" onclick="showAddResponsiModal(<%= meeting.id %>)">Add Responsi</button>
+                                  </div>
+                              <% } %>
+          
+                              <% if (meeting.Responses && meeting.Responses.length > 0) { %>
+                                  <div class="mb-4">
+                                      <h3 class="text-white font-bold mb-2">Responses</h3>
+                                      <div class="space-y-2">
+                                          <% meeting.Responses.forEach(response => { %>
+                                              <div class="flex justify-between items-center bg-indigo-200 text-indigo-800 px-4 py-3 rounded border border-indigo-500 hover:bg-indigo-500 hover:text-white transition">
+                                                  <a href="/detailResponsi/<%= kelas.id %>/<%= meeting.id %>/<%= response.id %>" class="block text-sm text-gray-900 font-medium italic">
+                                                      <%= response.title %>
+                                                  </a>
+                                                  <% if (userRole === 'aslab') { %>
+                                                      <a href="/deleteResponsi/<%= response.id %>" class="text-white bg-red-500 hover:bg-red-700 rounded-full p-1 ml-4">
+                                                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                          </svg>
+                                                      </a>
+                                                  <% } %>
+                                              </div>
+                                          <% }) %>
+                                      </div>
+                                  </div>
+                              <% } %>
+                          </div>
+                      </div>
+                  <% }) %>
+              <% } else { %>
+                  <p class="text-white">Belum ada pertemuan</p>
+              <% } %>
+          </div>
+            <!-- end content -->
+            
+            <!-- Add Responsi Modal -->
+            <div id="addResponsiModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+              <div class="bg-white rounded-lg p-6 space-y-4 w-full max-w-md">
+                <h2 class="text-xl font-bold">Add Responsi</h2>
+                <form id="addResponsiForm" action="/addResponsi" method="POST">
+                  <input type="hidden" name="meetingId" id="responsiMeetingId">
+                  <input type="hidden" name="classId" value="<%= kelas.id %>">
+                  <div class="mb-4">
+                    <label for="questionText" class="block text-gray-700 font-bold mb-2">Title</label>
+                    <input type="text" id="title" name="title" class="text-gray-700 mt-1 p-3 border rounded-lg w-full focus:outline-none" required>
+                  </div>
+                  <div class="mb-4">
+                    <label for="due" class="block text-sm font-medium text-gray-700">Due</label>
+                    <input type="datetime-local" id="due" name="due" class="text-gray-700 mt-1 p-3 border rounded-lg w-full focus:outline-none" required>
+                  </div>
+                  <div class="flex justify-end space-x-2">
+                    <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg transition duration-300 hover:bg-gray-700" onclick="closeAddResponsiModal()">Cancel</button>
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg transition duration-300 hover:bg-blue-700">Save</button>
+                  </div>
+                </form>
+                
+              </div>
+            </div>
+            
+
+        </div>
+    </div>
+
+    <!-- Modal Buat Pertemuan -->
+    <div id="buatPertemuanModal" class="modal hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white p-10 rounded-lg w-3/4 max-w-2xl">
+            <h2 class="text-3xl font-bold mb-6 text-black">Buat Pertemuan Baru</h2>
+            <form action="/createMeeting" method="post">
+                <div class="mb-6">
+                    <label for="meetingTitle" class="block text-sm font-medium text-gray-700">Nama Pertemuan</label>
+                    <input type="text" id="meetingTitle" name="title" class="text-gray-700 mt-1 p-3 border rounded-lg w-full focus:outline-none">
+                    <input type="hidden" name="classId" value="<%= kelas.id %>">
+                </div>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg">Simpan</button>
+                <button type="button" id="closeBuatPertemuanModalBtn" class="ml-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg">Batal</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Add Modul -->
+    <div id="addModulModal" class="modal hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+        <div class="bg-white p-10 rounded-lg w-3/4 max-w-2xl">
+            <h2 class="text-3xl font-bold mb-6 text-black">Add Modul</h2>
+            <form action="/addModul" method="post" enctype="multipart/form-data">
+                <div class="mb-6">
+                    <label for="modulFile" class="block text-sm font-medium text-gray-700">Modul File</label>
+                    <input type="file" id="modulFile" name="filePath" class="text-gray-700 mt-1 p-3 border rounded-lg w-full focus:outline-none">
+                    <input type="hidden" id="modulMeetingId" name="meetingId" class="text-gray-700 mt-1 p-3 border rounded-lg w-full ">
+                    <input type="hidden" name="classId" value="<%= kelas.id %>">
+                </div>
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg">Upload</button>
+                <button type="button" id="closeAddModulModalBtn" class="ml-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg">Batal</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Add Tugas -->
+    <div id="addTugasModal" class="modal hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+      <div class="bg-white p-10 rounded-lg w-3/4 max-w-2xl">
+          <h2 class="text-3xl font-bold mb-6 text-black">Add Tugas</h2>
+          <form action="/addTugas" method="post">
+              <div class="mb-6">
+                  <label for="titleTugas" class="block text-sm font-medium text-gray-700">Title</label>
+                  <input type="text" id="titleTugas" name="title" class="text-gray-700 mt-1 p-3 border rounded-lg w-full focus:outline-none">
+  
+                  <label for="tugasInstruksi" class="block text-sm font-medium text-gray-700">Instruksi Tugas</label>
+                  <textarea id="tugasInstruksi" name="instruksi" class="text-gray-700 mt-1 p-3 border rounded-lg w-full focus:outline-none"></textarea>
+  
+                  <label for="tugasDue" class="block text-sm font-medium text-gray-700">Due</label>
+                  <input type="datetime-local" id="tugasDue" name="due" class="text-gray-700 mt-1 p-3 border rounded-lg w-full focus:outline-none">
+  
+                  <input type="hidden" id="tugasMeetingId" name="meetingId" class="text-gray-700 mt-1 p-3 border rounded-lg w-full">
+                  <input type="hidden" name="classId" value="<%= kelas.id %>">
+              </div>
+              <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg">Add Tugas</button>
+              <button type="button" id="closeAddTugasModalBtn" class="ml-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg">Batal</button>
+          </form>
+      </div>
+  </div>
+  
+
+    <script>
+        const buatPertemuanBtn = document.getElementById('buatPertemuanBtn');
+        const buatPertemuanModal = document.getElementById('buatPertemuanModal');
+        const closeBuatPertemuanModalBtn = document.getElementById('closeBuatPertemuanModalBtn');
+
+        buatPertemuanBtn.addEventListener('click', () => {
+            buatPertemuanModal.classList.remove('hidden');
+        });
+
+        closeBuatPertemuanModalBtn.addEventListener('click', () => {
+            buatPertemuanModal.classList.add('hidden');
+        });
+
+        function showAddModulModal(meetingId) {
+            const addModulModal = document.getElementById('addModulModal');
+            const modulMeetingId = document.getElementById('modulMeetingId');
+            modulMeetingId.value = meetingId;
+            addModulModal.classList.remove('hidden');
+        }
+
+        const closeAddModulModalBtn = document.getElementById('closeAddModulModalBtn');
+        closeAddModulModalBtn.addEventListener('click', () => {
+            const addModulModal = document.getElementById('addModulModal');
+            addModulModal.classList.add('hidden');
+        });
+
+        function showAddTugasModal(meetingId) {
+            const addTugasModal = document.getElementById('addTugasModal');
+            const tugasMeetingId = document.getElementById('tugasMeetingId');
+            tugasMeetingId.value = meetingId;
+            addTugasModal.classList.remove('hidden');
+        }
+
+        const closeAddTugasModalBtn = document.getElementById('closeAddTugasModalBtn');
+        closeAddTugasModalBtn.addEventListener('click', () => {
+            const addTugasModal = document.getElementById('addTugasModal');
+            addTugasModal.classList.add('hidden');
+        });
+
+
+        function showAddResponsiModal(meetingId) {
+              document.getElementById('responsiMeetingId').value = meetingId;
+              document.getElementById('addResponsiModal').classList.remove('hidden');
+            }
+            
+            function closeAddResponsiModal() {
+              document.getElementById('addResponsiModal').classList.add('hidden');
+            }
+    </script>
+</body>
+
+</html>

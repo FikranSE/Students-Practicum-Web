@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Praktikum Data Mining</title>
+    <link href="../output.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-900 text-white">
+  <nav class="bg-black p-10 flex justify-between items-center h-20">
+    <div class="space-x-4">
+      <a href="/home" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Home</a>
+      <a href="/notifikasi" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Notifikasi</a>
+      <a href="/profile" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Profile</a>
+      <a href="/logout" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Logout</a>
+    </div>
+    <div class="space-x-4 flex items-center">
+      <% if (userRole === 'aslab') { %>
+        <button id="buatKelasBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Buat Kelas</button>
+      <% } %>
+      <% if (userRole === 'mahasiswa') { %>
+        <a href="/enrollment" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Enrollment</a>
+      <% } %>
+      <div class="flex items-center space-x-2">
+        <div class="bg-gray-700 rounded-full w-10 h-10 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A12.074 12.074 0 0012 21a12.074 12.074 0 006.879-3.196M15 10a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </div>
+        <span class="text-white font-medium"><%= userName %></span>
+      </div>
+    </div>
+  </nav>
+
+    <main class="container mx-auto p-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+          <% kelasList.forEach(kelas => { %>
+            <a href="/dashboard/<%= kelas.id %>" class="bg-black p-4 rounded-lg border-2 border-blue-500 flex flex-col items-center transition-transform transform hover:scale-105">
+              <div class="w-32 h-32 bg-gray-700 flex items-center justify-center mb-4">
+                <span class="text-gray-400">Image</span>
+              </div>
+              <h3 class="text-xl font-semibold"><%= kelas.name %></h3>
+              <p class="text-gray-400"><%= kelas.year %></p>
+            </a>
+          <% }) %>          
+        </div>
+
+        <!-- Modal -->
+        <div id="myModal" class="modal hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
+            <div class="bg-white p-10 rounded-lg w-3/4 max-w-2xl">
+                <h2 class="text-3xl font-bold mb-6 text-black">Buat Kelas Baru</h2>
+                <!-- Isi modal disini -->
+                <form action="/createClass" method="post">
+                    <div class="mb-6">
+                        <label for="namaKelas" class="block text-sm font-medium text-gray-700">Nama Kelas</label>
+                        <input type="text" id="namaKelas" name="name" class="text-gray-700 mt-1 p-3 border rounded-lg w-full">
+                    </div>
+                    <div class="mb-6">
+                        <label for="year" class="block text-sm font-medium text-gray-700">Tahun</label>
+                        <input type="text" id="year" name="year" class="text-gray-700 mt-1 p-3 border rounded-lg w-full">
+                    </div>
+                    <div class="mb-6">
+                        <label for="enrollKey" class="block text-sm font-medium text-gray-700">Enroll Key</label>
+                        <input type="text" id="enrollKey" name="enrollKey" class="text-gray-700 mt-1 p-3 border rounded-lg w-full">
+                    </div>
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg">Simpan</button>
+                    <button type="button" id="closeModalBtn" class="ml-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg">Batal</button>
+                </form>
+            </div>
+        </div>
+        <!-- End Modal -->
+    </main>
+
+    <script>
+        const buatKelasBtn = document.getElementById('buatKelasBtn');
+        const modal = document.getElementById('myModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+
+        buatKelasBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+    </script>
+</body>
+
+</html>

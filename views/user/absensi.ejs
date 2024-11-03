@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Praktikum Data Mining</title>
+    <link href="/output.css" rel="stylesheet">
+
+    <style>
+      @media print {
+        body * {
+          visibility: hidden;
+        }
+        #print-content, #print-content * {
+          visibility: visible;
+        }
+        #print-content {
+          position: absolute;
+          left: 0;
+          top: 0;
+        }
+      }
+    </style>
+</head>
+
+<body class="bg-gray-900 text-white">
+  <nav class="bg-black p-10 flex justify-between items-center h-20">
+    <div class="space-x-4">
+      <a href="/home" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Home</a>
+      <a href="/notifikasi" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Notifikasi</a>
+      <a href="/profile" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Profile</a>
+      <a href="/logout" class="text-white hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Logout</a>
+    </div>
+    <div class="space-x-4 flex items-center">
+      <% if (userRole === 'aslab') { %>
+        <button id="buatKelasBtn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Buat Kelas</button>
+      <% } %>
+      <% if (userRole === 'mahasiswa') { %>
+        <a href="/enrollment" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Enrollment</a>
+      <% } %>
+      <div class="flex items-center space-x-2">
+        <div class="bg-gray-700 rounded-full w-10 h-10 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A12.074 12.074 0 0012 21a12.074 12.074 0 006.879-3.196M15 10a3 3 0 11-6 0 3 3 0 016 0z"></path>
+          </svg>
+        </div>
+        <span class="text-white font-medium"><%= userName %></span>
+      </div>
+    </div>
+  </nav>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-64 bg-black h-screen p-5">
+            <h2 class="text-xl font-bold mb-5"><%= kelas.name %> <%= kelas.year %></h2>
+            <nav class="space-y-2">
+                <a href="/dashboard/<%= kelas.id %>" class="bg-blue-500 block py-2 px-4 rounded-md text-white transition-colors duration-300 border-b-2 border-transparent">Pertemuan Praktikum</a>
+                <a href="/jadwalPraktikum/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Jadwal Praktikum</a>
+                <a href="/showReference/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Referensi Tambahan</a>
+                <a href="/forumDiskusi/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Forum Diskusi</a>
+                <% if (userRole === 'aslab') { %>
+                  <a href="/absensi/<%= kelas.id %>" class="block py-2 px-4 rounded bg-gray-800 hover:bg-blue-500 hover:text-white transition-colors duration-300 px-4 py-2 rounded-md border-b-2 border-transparent">Absen kelas</a>
+                <% } %>
+                
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-10 bg-gray-100 min-h-screen">
+          <form action="/simpan-absensi" method="POST">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+              <div class="flex justify-between items-center w-full">
+                <div class="mb-3" style="width:160px;">
+                  <input name="tanggal_absen" type="date" class="focus:outline-none border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
+                </div>
+                <div>
+                  <p class="text-2xl font-bold italic text-gray-700"><%= kelas.name %> <%= kelas.year %></p>
+                </div>
+              </div>
+              <div id="print-content">
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIM</th>
+                      <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kehadiran</th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    <% users.forEach(user => { %>
+                      <tr>
+                        <td class="px-6 py-4 text-black font-medium uppercase"><%= user.name %></td>
+                        <td class="px-6 py-4 text-black font-medium"><%= user.nim %></td>
+                        <td class="px-6 py-4 text-black font-medium">
+                          <select name="kehadiran[<%= user.id %>]" class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <option value="">Pilih kehadiran</option>
+                            <option value="Hadir">Hadir</option>
+                            <option value="Izin">Izin</option>
+                            <option value="Sakit">Sakit</option>
+                            <option value="Alfa">Alfa</option>
+                          </select>
+                        </td>
+                      </tr>
+                    <% }); %>
+                  </tbody>
+                </table>
+              </div>
+              <input type="hidden" name="classId" value="<%= kelas.id %>">
+              <button type="submit" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Simpan Absensi</button>
+              <button type="button" class="mt-4 bg-green-500 text-white px-4 py-2 rounded" onclick="printAttendance()">Cetak Absensi</button>
+            </div>
+          </form>
+        </div>
+        
+        <!-- end content -->
+        
+        <script>
+          function printAttendance() {
+            window.print();
+          }
+        </script>
+        
+    </div>
+</body>
+
+</html>
